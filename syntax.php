@@ -25,7 +25,7 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
         return array(
             'author' => 'Gina Haeussge',
             'email'  => 'osd@foosel.net',
-            'date'   => '2007-07-17',
+            'date'   => '2008-05-04',
             'name'   => 'Keyboard Syntax Plugin',
             'desc'   => 'Marks text as keyboard key presses. Enhancements by Christopher Arndt.',
             'url'    => 'http://wiki.foosel.net/snippets/dokuwiki/keyboard',

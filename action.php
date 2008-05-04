@@ -27,7 +27,7 @@ class action_plugin_keyboard extends DokuWiki_Action_Plugin {
 		return array (
 			'author' => 'Gina Haeussge',
 			'email' => 'osd@foosel.net',
-			'date' => '2007-04-11',
+			'date' => '2007-05-04',
 			'name' => 'Keyboard Action Plugin',
 			'desc' => 'Inserts button for keyboard plugin into toolbar',
 			'url' => 'http://wiki.foosel.net/snippets/dokuwiki/keyboard',
