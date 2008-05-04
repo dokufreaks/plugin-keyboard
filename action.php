@@ -46,14 +46,9 @@ class action_plugin_keyboard extends DokuWiki_Action_Plugin {
 	 * Inserts the toolbar button
 	 */
 	function insert_button(&$event, $param) {
-        global $lang;
-        global $conf;
-        include_once(dirname(__FILE__).'/lang/en/lang.php');
-        @include_once(dirname(__FILE__).'/lang/'.$conf['lang'].'/lang.php');
-		
 		$event->data[] = array(	
 			'type'   => 'format',
-			'title'  => $lang['qb_keyboard'],
+			'title'  => $this->getLang('qb_keyboard'),
 			'icon'   => '../../plugins/keyboard/keyboard.png',
 			'open'   => '<key>',
 			'close'  => '</key>',
