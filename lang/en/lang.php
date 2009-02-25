@@ -19,6 +19,7 @@ $lang['Minus'] = '&minus;';
 $lang['Ampersand'] = "&amp;";
 $lang['LessThan'] = '&lt;';
 $lang['GreaterThan'] = '&gt;';
+$lang['Command'] = '⌘';
+$lang['Option'] = '⌥';
 
 $lang['qb_keyboard'] = 'Mark text as key press'
-?>
