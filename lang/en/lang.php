@@ -21,5 +21,6 @@ $lang['LessThan'] = '&lt;';
 $lang['GreaterThan'] = '&gt;';
 $lang['Command'] = '⌘';
 $lang['Option'] = '⌥';
+$lang['Eject'] = '⏏';
 
-$lang['qb_keyboard'] = 'Mark text as key press'
+$lang['qb_keyboard'] = 'Mark text as key press';
