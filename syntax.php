@@ -69,12 +69,6 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
      * Create output
      */
     function render($mode, &$renderer, $data) {
-        global $lang;
-        global $conf;
-        
-        include_once(dirname(__FILE__).'/lang/en/lang.php');
-        @include_once(dirname(__FILE__).'/lang/'.$conf['lang'].'/lang.php');
-        
         if ($mode == 'xhtml') {
             list($state, $match) = $data;
             switch ($state) {
@@ -88,8 +82,9 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
                           strlen($key) > 1) {
                             $out[] = $renderer->_xmlEntities(substr($key,1,-1));
                         } else {
-                            if (isset($lang[$key])) {
-                                $out[] = $lang[$key];
+                        	$subst = $this->getLang($key);
+                            if ($subst) {
+                                $out[] = $subst;
                             } else {
                                 $out[] = $renderer->_xmlEntities(ucfirst($key));
                             }
