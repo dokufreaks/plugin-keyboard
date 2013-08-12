@@ -56,7 +56,15 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
             case DOKU_LEXER_ENTER :
                 return array($state, '');
             case DOKU_LEXER_UNMATCHED :
-                $keys = explode('-', $match);
+                $mpos = strpos($match, '-');
+                $ppos = strpos($match, '+');
+                if(!$mpos)
+                    $separator = '+';
+                else if(!$ppos)
+                    $separator = '-';
+                else
+                    $separator = substr($match,($mpos<$ppos)?$mpos:$ppos, 1);
+                $keys = explode($separator, $match);
                 $keys = array_map('trim', $keys);
                 return array($state, $keys);
             case DOKU_LEXER_EXIT:

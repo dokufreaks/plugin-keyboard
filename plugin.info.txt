@@ -1,0 +1,8 @@
+# General Plugin Info do not edit
+base   keyboard
+author Gina Häußge
+email  osd@foosel.net
+date   2008-05-04
+name   keyboard
+desc   The keyboard plugin provides a combined syntax and action plugin in order to markup text as keyboard keys, similar to (and making use of) the existing (X)HTML tag <kbd>…</kbd>. A quick button for the markup is automatically inserted into the toolbar of the edit form.
+url    https://www.dokuwiki.org/plugin:keyboard
