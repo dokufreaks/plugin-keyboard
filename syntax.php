@@ -90,7 +90,7 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
                           strlen($key) > 1) {
                             $out[] = $renderer->_xmlEntities(substr($key,1,-1));
                         } else {
-                        	$subst = $this->getLang($key);
+                            $subst = $this->getLang($key);
                             if ($subst) {
                                 $out[] = $subst;
                             } else {
@@ -102,6 +102,55 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
                     break;
                 case DOKU_LEXER_EXIT :
                     $renderer->doc .= '</kbd>';
+                    break;
+            }
+            return true;
+        }
+        if ($mode == 'odt') {
+            list($state, $match) = $data;
+            switch ($state) {
+                case DOKU_LEXER_ENTER :
+                    $renderer->autostyles['plugin_keyboard'] =
+                     '<style:style style:name="plugin_keyboard_frame" style:family="graphic">
+                        <style:graphic-properties draw:stroke="solid"
+                        svg:stroke-width="0.04cm" svg:stroke-color="#cccccc" draw:marker-start-width="0.01cm"
+                        draw:marker-end-width="0.01cm" draw:fill-color="#ffffff"
+                        draw:auto-grow-width="true" fo:min-height="0.3cm"
+                        fo:padding-top="-0.02cm" fo:padding-bottom="-0.02cm" fo:padding-left="-0.02cm" fo:padding-right="-0.02cm"
+                        draw:shadow="visible" draw:shadow-offset-x="0.05cm" draw:shadow-offset-y="0.05cm" style:run-through="foreground"
+                        style:wrap="run-through" style:number-wrapped-paragraphs="no-limit" style:vertical-pos="from-top"
+                        style:horizontal-pos="from-left" style:horizontal-rel="paragraph"
+                        draw:wrap-influence-on-position="once-concurrent" style:flow-with-text="false"/>
+                      </style:style>
+                      <style:style style:name="plugin_keyboard_text" style:family="text">
+                        <style:text-properties style:font-name="Monospace"/>
+                      </style:style>';
+
+                    $renderer->doc .= '<draw:frame text:anchor-type="as-char" svg:y="-0.42cm" draw:z-index="0"
+                                       draw:style-name="plugin_keyboard_frame" draw:text-style-name="plugin_keyboard_text"
+                                       svg:width="0.989cm" svg:height="0.461cm">
+                                       <draw:text-box>
+                                       <text:p text:style-name="plugin_keyboard_text">';
+                    break;
+                case DOKU_LEXER_UNMATCHED :
+                    foreach ($match as $key) {
+                        if (substr($key, 0, 1) == "'" and
+                          substr($key, -1, 1) == "'" and
+                          strlen($key) > 1) {
+                            $out[] = $renderer->_xmlEntities(substr($key,1,-1));
+                        } else {
+                            $subst = $this->getLang($key);
+                            if ($subst) {
+                                $out[] = $subst;
+                            } else {
+                                $out[] = $renderer->_xmlEntities(ucfirst($key));
+                            }
+                        }
+                    }
+                    $renderer->doc .= implode('</kbd>+<kbd>', $out);
+                    break;
+                case DOKU_LEXER_EXIT :
+                    $renderer->doc .= '</text:p></draw:text-box></draw:frame>';
                     break;
             }
             return true;
