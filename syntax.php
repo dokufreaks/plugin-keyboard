@@ -106,6 +106,57 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
             }
             return true;
         }
+        if ($mode == 'odt') {
+            list($state, $match) = $data;
+            switch ($state) {
+                case DOKU_LEXER_ENTER :
+                    $this->renderODTOpenSpan($renderer);
+                    break;
+                case DOKU_LEXER_UNMATCHED :
+                    foreach ($match as $key) {
+                        if (substr($key, 0, 1) == "'" and
+                          substr($key, -1, 1) == "'" and
+                          strlen($key) > 1) {
+                            $out[] = $renderer->_xmlEntities(substr($key,1,-1));
+                        } else {
+                        	$subst = $this->getLang($key);
+                            if ($subst) {
+                                $out[] = $subst;
+                            } else {
+                                $out[] = $renderer->_xmlEntities(ucfirst($key));
+                            }
+                        }
+                    }
+                    $renderer->doc .= implode('</kbd>+<kbd>', $out);
+                    break;
+                case DOKU_LEXER_EXIT :
+                    $this->renderODTCloseSpan($renderer);
+                    break;
+            }
+            return true;
+        }
         return false;
+    }
+
+    protected function renderODTOpenSpan ($renderer) {
+        $properties = array ();
+
+        if ( method_exists ($renderer, 'getODTProperties') === false ) {
+            // Function is not supported by installed ODT plugin version, return.
+            return;
+        }
+
+        // Get CSS properties for ODT export.
+        $renderer->getODTProperties ($properties, 'kbd', NULL, NULL);
+
+        $renderer->_odtSpanOpenUseProperties($properties);
+    }
+
+    protected function renderODTCloseSpan ($renderer) {
+        if ( method_exists ($renderer, '_odtSpanClose') === false ) {
+            // Function is not supported by installed ODT plugin version, return.
+            return;
+        }
+        $renderer->_odtSpanClose();
     }
 }
