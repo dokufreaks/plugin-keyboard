@@ -17,4 +17,5 @@ kbd {
   margin-right: 2px;
   vertical-align: top;
   font-family: sans-serif;
+  white-space: nowrap;
 }
