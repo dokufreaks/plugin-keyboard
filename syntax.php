@@ -42,10 +42,12 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
 
     function connectTo($mode) {
          $this->Lexer->addEntryPattern('<key>(?=.*?\x3C/key\x3E)', $mode, 'plugin_keyboard');
+         $this->Lexer->addEntryPattern('<kbd>(?=.*?\x3C/kbd\x3E)', $mode, 'plugin_keyboard');
     }
 
     function postConnect() {
         $this->Lexer->addExitPattern('</key>', 'plugin_keyboard');
+        $this->Lexer->addExitPattern('</kbd>', 'plugin_keyboard');
     }
 
     /**
