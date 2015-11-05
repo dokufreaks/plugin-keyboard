@@ -133,7 +133,15 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
                             }
                         }
                     }
-                    $renderer->doc .= implode('</kbd>+<kbd>', $out);
+                    $max = count($out);
+                    for ($index = 0 ; $index < $max ; $index++) {
+                        $renderer->doc .= $out [$index];
+                        if ($index+1 < $max) {
+                            $this->renderODTCloseSpan($renderer);
+                            $renderer->doc .= '+';
+                            $this->renderODTOpenSpan($renderer);
+                        }
+                    }
                     break;
                 case DOKU_LEXER_EXIT :
                     $this->renderODTCloseSpan($renderer);
