@@ -38,7 +38,7 @@ class action_plugin_keyboard extends DokuWiki_Action_Plugin {
 	/**
 	 * Register the eventhandlers
 	 */
-	function register(& $contr) {
+	function register(Doku_Event_Handler $contr) {
 		$contr->register_hook('TOOLBAR_DEFINE', 'AFTER', $this, 'insert_button', array ());
 	}
 	
