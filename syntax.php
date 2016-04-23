@@ -18,20 +18,6 @@ require_once(DOKU_PLUGIN.'syntax.php');
  */
 class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
 
-    /**
-     * return some info
-     */
-    function getInfo() {
-        return array(
-            'author' => 'Gina Haeussge',
-            'email'  => 'osd@foosel.net',
-            'date'   => '2008-05-04',
-            'name'   => 'Keyboard Syntax Plugin',
-            'desc'   => 'Marks text as keyboard key presses. Enhancements by Christopher Arndt.',
-            'url'    => 'http://wiki.foosel.net/snippets/dokuwiki/keyboard',
-        );
-    }
-
     function getType() { return 'formatting'; }
 
     function getAllowedTypes() {

@@ -21,21 +21,6 @@ if (!defined('NL'))
 class action_plugin_keyboard extends DokuWiki_Action_Plugin {
 
 	/**
-	 * Return some info
-	 */
-	function getInfo() {
-		return array (
-			'author' => 'Gina Haeussge',
-			'email' => 'osd@foosel.net',
-			'date' => '2007-05-04',
-			'name' => 'Keyboard Action Plugin',
-			'desc' => 'Inserts button for keyboard plugin into toolbar',
-			'url' => 'http://wiki.foosel.net/snippets/dokuwiki/keyboard',
-			
-		);
-	}
-
-	/**
 	 * Register the eventhandlers
 	 */
 	function register(Doku_Event_Handler $contr) {
