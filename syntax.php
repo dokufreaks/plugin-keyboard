@@ -121,10 +121,10 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
                     }
                     $max = count($out);
                     for ($index = 0 ; $index < $max ; $index++) {
-                        $renderer->doc .= $out [$index];
+                        $renderer->cdata ($out [$index]);
                         if ($index+1 < $max) {
                             $this->renderODTCloseSpan($renderer);
-                            $renderer->doc .= '+';
+                            $renderer->cdata ('+');
                             $this->renderODTOpenSpan($renderer);
                         }
                     }
