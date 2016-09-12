@@ -148,7 +148,7 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
 
         // Get CSS properties for ODT export.
         $renderer->getODTProperties ($properties, 'kbd', NULL, NULL);
-
+        unset ($properties ['font-size']);
         $renderer->_odtSpanOpenUseProperties($properties);
     }
 
