@@ -77,12 +77,14 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
                     break;
                 case DOKU_LEXER_UNMATCHED :
                     foreach ($match as $key) {
-                        if (substr($key, 0, 1) == "'" and
-                          substr($key, -1, 1) == "'" and
-                          strlen($key) > 1) {
+                        if ($this->getConf('disable_translation')) {
+                            $out[] = $renderer->_xmlEntities($key);
+                        } else if (substr($key, 0, 1) == "'" and
+                                   substr($key, -1, 1) == "'" and
+                                   strlen($key) > 1) {
                             $out[] = $renderer->_xmlEntities(substr($key,1,-1));
                         } else {
-                        	$subst = $this->getLang($key);
+                            $subst = $this->getLang($key);
                             if ($subst) {
                                 $out[] = $subst;
                             } else {
@@ -106,16 +108,18 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
                     break;
                 case DOKU_LEXER_UNMATCHED :
                     foreach ($match as $key) {
-                        if (substr($key, 0, 1) == "'" and
-                          substr($key, -1, 1) == "'" and
-                          strlen($key) > 1) {
-                            $out[] = $renderer->_xmlEntities(substr($key,1,-1));
+                        if ($this->getConf('disable_translation')) {
+                            $out[] = $key;
+                        } else if (substr($key, 0, 1) == "'" and
+                                   substr($key, -1, 1) == "'" and
+                                   strlen($key) > 1) {
+                            $out[] = substr($key,1,-1);
                         } else {
-                        	$subst = $this->getLang($key);
+                            $subst = $this->getLang($key);
                             if ($subst) {
                                 $out[] = $subst;
                             } else {
-                                $out[] = $renderer->_xmlEntities(ucfirst($key));
+                                $out[] = ucfirst($key);
                             }
                         }
                     }
