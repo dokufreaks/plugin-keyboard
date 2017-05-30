@@ -17,6 +17,12 @@ require_once(DOKU_PLUGIN.'syntax.php');
  * need to inherit from this class
  */
 class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
+    protected $lastClass = null;
+    protected $styles = array ('__keyboard' => array ('display-name' => 'Keyboard',
+                                                      'name' => null),
+                               '__keyboard_keypress' => array ('display-name' => 'Keypress',
+                                                               'name' => null));
+    protected $stylesCreated = false;
 
     function getType() { return 'formatting'; }
 
@@ -27,8 +33,10 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
     function getSort(){ return 444; }
 
     function connectTo($mode) {
-         $this->Lexer->addEntryPattern('<key>(?=.*?\x3C/key\x3E)', $mode, 'plugin_keyboard');
-         $this->Lexer->addEntryPattern('<kbd>(?=.*?\x3C/kbd\x3E)', $mode, 'plugin_keyboard');
+         $this->Lexer->addEntryPattern('<key class="[^"]*">', $mode, 'plugin_keyboard');
+         $this->Lexer->addEntryPattern('<kbd class="[^"]*">', $mode, 'plugin_keyboard');
+         $this->Lexer->addEntryPattern('<key>', $mode, 'plugin_keyboard');
+         $this->Lexer->addEntryPattern('<kbd>', $mode, 'plugin_keyboard');
     }
 
     function postConnect() {
@@ -42,7 +50,14 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
     function handle($match, $state, $pos, Doku_Handler $handler) {
         switch ($state) {
             case DOKU_LEXER_ENTER :
-                return array($state, '');
+                if (preg_match('/class="[^"]*"/', $match, $classString) === 1) {
+                    $class = substr($classString[0], 6);
+                    $class = trim($class, '"');
+                } else {
+                    $class = $this->getConf('css_class');
+                }
+                $this->lastClass = $class;
+                return array($state, '', $this->lastClass);
             case DOKU_LEXER_UNMATCHED :
                 if (strlen($match) > 1) {
                     $mpos = strpos($match, '-');
@@ -58,7 +73,7 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
                 } else {
                     $keys = array($match);
                 }
-                return array($state, $keys);
+                return array($state, $keys, $this->lastClass);
             case DOKU_LEXER_EXIT:
                 return array($state, '');
         }
@@ -70,10 +85,14 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
      */
     function render($mode, Doku_Renderer $renderer, $data) {
         if ($mode == 'xhtml') {
-            list($state, $match) = $data;
+            list($state, $match, $class) = $data;
             switch ($state) {
                 case DOKU_LEXER_ENTER :
-                    $renderer->doc .= '<kbd>';
+                    if (empty($class)) {
+                        $renderer->doc .= '<kbd>';
+                    } else {
+                        $renderer->doc .= '<kbd class="'.$class.'">';
+                    }
                     break;
                 case DOKU_LEXER_UNMATCHED :
                     foreach ($match as $key) {
@@ -92,7 +111,11 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
                             }
                         }
                     }
-                    $renderer->doc .= implode('</kbd>+<kbd>', $out);
+                    if (empty($class)) {
+                        $renderer->doc .= implode('</kbd>+<kbd>', $out);
+                    } else {
+                        $renderer->doc .= implode('</kbd>+<kbd class="'.$class.'">', $out);
+                    }
                     break;
                 case DOKU_LEXER_EXIT :
                     $renderer->doc .= '</kbd>';
@@ -101,10 +124,13 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
             return true;
         }
         if ($mode == 'odt') {
-            list($state, $match) = $data;
+            list($state, $match, $class) = $data;
             switch ($state) {
                 case DOKU_LEXER_ENTER :
-                    $this->renderODTOpenSpan($renderer);
+                    if ($this->stylesCreated == false || !array_key_exists ($class, $this->styles)) {
+                        $this->createODTStyles($renderer, $class);
+                    }
+                    $this->renderODTOpenSpan($renderer, $this->styles[$class]['name']);
                     break;
                 case DOKU_LEXER_UNMATCHED :
                     foreach ($match as $key) {
@@ -129,7 +155,7 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
                         if ($index+1 < $max) {
                             $this->renderODTCloseSpan($renderer);
                             $renderer->cdata ('+');
-                            $this->renderODTOpenSpan($renderer);
+                            $this->renderODTOpenSpan($renderer, $this->styles[$class]['name']);
                         }
                     }
                     break;
@@ -142,18 +168,72 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
         return false;
     }
 
-    protected function renderODTOpenSpan ($renderer) {
-        $properties = array ();
+    protected function createODTStyles (Doku_Renderer $renderer, $class = null) {
+        if ( method_exists ($renderer, 'getODTPropertiesFromElement') === true ) {
+            // Create parent style to group the others beneath it        
+            if (!$renderer->styleExists('Plugin_Keyboard')) {
+                $parent_properties = array();
+                $parent_properties ['style-parent'] = NULL;
+                $parent_properties ['style-class'] = 'Plugin Keyboard';
+                $parent_properties ['style-name'] = 'Plugin_Keyboard';
+                $parent_properties ['style-display-name'] = 'Plugin Keyboard';
+                $renderer->createTextStyle($parent_properties);
+            }
 
-        if ( method_exists ($renderer, 'getODTProperties') === false ) {
+            if ($this->stylesCreated === false) {
+                $this->stylesCreated = true;
+                foreach ($this->styles as $class => $style) {
+                    // Get CSS properties for ODT export.
+                    // Set parameter $inherit=false to prevent changiung the font-size and family!
+                    $properties = array();
+                    $renderer->getODTPropertiesNew ($properties, 'kbd', 'class="'.$class.'"', NULL, false);
+                    if ($properties['font-family'] == 'inherit') {
+                        unset ($properties['font-family']);
+                    }
+
+                    $style_name = 'Plugin_Keyboard_'.$class;
+                    if (!$renderer->styleExists($style_name)) {
+                        $this->styles[$class]['name'] = $style_name;
+                        $properties ['style-parent'] = 'Plugin_Keyboard';
+                        $properties ['style-class'] = NULL;
+                        $properties ['style-name'] = $style_name;
+                        $properties ['style-display-name'] = $style['display-name'];
+                        $renderer->createTextStyle($properties);
+                    }
+                }
+            }
+
+            if (!empty($class) && !array_key_exists($class, $this->styles)) {
+                // Get CSS properties for ODT export.
+                // Set parameter $inherit=false to prevent changiung the font-size and family!
+                $properties = array();
+                $renderer->getODTPropertiesNew ($properties, 'kbd', 'class="'.$class.'"', NULL, false);
+                if ($properties['font-family'] == 'inherit') {
+                    unset ($properties['font-family']);
+                }
+
+                $style_name = 'Plugin_Keyboard_'.$class;
+                if (!$renderer->styleExists($style_name)) {
+                    $display_name = ucfirst(trim($class, '_'));
+                    $new = array ('name' => $style_name, 'display-name' => $display_name);
+                    $this->styles[$class] = $new;
+
+                    $properties ['style-parent'] = 'Plugin_Keyboard';
+                    $properties ['style-class'] = NULL;
+                    $properties ['style-name'] = $style_name;
+                    $properties ['style-display-name'] = $display_name;
+                    $renderer->createTextStyle($properties);
+                }
+            }
+        }
+    }
+
+    protected function renderODTOpenSpan ($renderer, $class) {
+        if ( method_exists ($renderer, '_odtSpanOpen') === false ) {
             // Function is not supported by installed ODT plugin version, return.
             return;
         }
-
-        // Get CSS properties for ODT export.
-        $renderer->getODTProperties ($properties, 'kbd', NULL, NULL);
-        unset ($properties ['font-size']);
-        $renderer->_odtSpanOpenUseProperties($properties);
+        $renderer->_odtSpanOpen($class);
     }
 
     protected function renderODTCloseSpan ($renderer) {

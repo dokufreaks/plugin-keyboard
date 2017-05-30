@@ -1,6 +1,7 @@
 /* --- keyboard plugin --- */
 
-kbd {
+
+kbd.__keyboard {
   color: #333333;
   background-color: white;
   text-align: center;
@@ -19,3 +20,23 @@ kbd {
   font-family: sans-serif;
   white-space: nowrap;
 }
+
+// Adopted from MediaWiki template keypress.
+kbd.__keyboard_keypress {
+    border: 1px solid #aaa;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+    border-radius: 0.2em;
+    -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1);
+    -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1);
+    box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1);
+    background-color: #f9f9f9;
+    background-image: -moz-linear-gradient(top, #eee, #f9f9f9, #eee);
+    background-image: -o-linear-gradient(top, #eee, #f9f9f9, #eee);
+    background-image: -webkit-linear-gradient(top, #eee, #f9f9f9, #eee);
+    background-image: linear-gradient(to bottom, #eee, #f9f9f9, #eee);
+    padding: 0.1em 0.3em;
+    font-family: inherit;
+    font-size: 0.85em;
+}
+
