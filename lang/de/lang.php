@@ -23,5 +23,4 @@ $lang['Undo'] = 'Rückg';
 $lang['Redo'] = 'Wiederherstell';
 $lang['Space'] = 'Leertaste';
 
-$lang['qb_keyboard'] = 'Text als Tastatureingabe markieren'
-?>
+$lang['qb_keyboard'] = 'Text als Tastatureingabe markieren';
