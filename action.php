@@ -39,7 +39,11 @@ class action_plugin_keyboard extends DokuWiki_Action_Plugin {
 			'close'  => '</key>',
 		);
 	
-		return $event->_default;
+		// Code for backwards compatibility
+		if (!method_exists ($event , 'mayRunDefault')) {
+			return $event->_default;
+		}
+		return $event->mayRunDefault();
 	}
 
 }
