@@ -59,7 +59,9 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
                 $this->lastClass = $class;
                 return array($state, '', $this->lastClass);
             case DOKU_LEXER_UNMATCHED :
-                if (strlen($match) > 1) {
+                $length = strlen($match);
+                if ($length > 1 &&
+                    !($match[0] == "'" && $match[$length-1] == "'")) {
                     $mpos = strpos($match, '-');
                     $ppos = strpos($match, '+');
                     if(!$mpos)
