@@ -7,17 +7,6 @@
  * @author     Gina Haeussge <osd@foosel.net>
  */
 
-// must be run within Dokuwiki
-if (!defined('DOKU_INC'))
-    die();
-
-if (!defined('DOKU_PLUGIN'))
-    define('DOKU_PLUGIN', DOKU_INC . 'lib/plugins/');
-require_once (DOKU_PLUGIN . 'action.php');
-
-if (!defined('NL'))
-    define('NL', "\n");
-
 class action_plugin_keyboard extends DokuWiki_Action_Plugin {
 
     /**
