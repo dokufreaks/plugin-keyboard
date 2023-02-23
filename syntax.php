@@ -72,9 +72,9 @@ class syntax_plugin_keyboard extends DokuWiki_Syntax_Plugin {
                 }
                 return array($state, $keys, $this->lastClass);
             case DOKU_LEXER_EXIT:
-                return array($state, '');
+                return array($state, '', '');
         }
-        return array();
+        return array($state, '', '');
     }
 
     /**
